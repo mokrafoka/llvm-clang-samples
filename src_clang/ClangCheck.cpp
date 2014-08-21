@@ -146,10 +146,7 @@ public:
 
 class InsertAdjuster : public clang::tooling::ArgumentsAdjuster {
 public:
-  enum Position {
-    BEGIN,
-    END
-  };
+  enum Position { BEGIN, END };
 
   InsertAdjuster(const CommandLineArguments &Extra, Position Pos)
       : Extra(Extra), Pos(Pos) {}
@@ -185,14 +182,14 @@ private:
 namespace clang_check {
 class ClangCheckActionFactory {
 public:
-  clang::ASTConsumer *newASTConsumer() {
+  std::unique_ptr<clang::ASTConsumer> newASTConsumer() {
     if (ASTList)
       return clang::CreateASTDeclNodeLister();
     if (ASTDump)
-      return clang::CreateASTDumper(ASTDumpFilter);
+      return clang::CreateASTDumper(ASTDumpFilter, true, true);
     if (ASTPrint)
       return clang::CreateASTPrinter(&llvm::outs(), ASTDumpFilter);
-    return new clang::ASTConsumer();
+    return std::unique_ptr<clang::ASTConsumer>(new clang::ASTConsumer());
   }
 };
 }

@@ -111,10 +111,10 @@ public:
         .write(llvm::outs());
   }
 
-  ASTConsumer *CreateASTConsumer(CompilerInstance &CI,
-                                 StringRef file) override {
+  std::unique_ptr<clang::ASTConsumer>
+  CreateASTConsumer(CompilerInstance &CI, StringRef file) override {
     TheRewriter.setSourceMgr(CI.getSourceManager(), CI.getLangOpts());
-    return new MyASTConsumer(TheRewriter);
+    return std::unique_ptr<clang::ASTConsumer>(new MyASTConsumer(TheRewriter));
   }
 
 private:
